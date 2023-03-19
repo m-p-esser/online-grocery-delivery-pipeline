@@ -1,6 +1,10 @@
 initialize_git:
 	@echo "Initializing git..."
-	git init 
+	git init
+
+initialize_dvc:
+	@echo "Initializing dvc..."
+	dvc init  
 
 activate:
 	@echo "Activating virtual environment"
