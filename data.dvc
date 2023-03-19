@@ -1,0 +1,31 @@
+outs:
+- path: data
+  files:
+  - relpath: final/.gitkeep
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      remote_storage:
+        etag: 0892b2db92e1e7fd021001
+        version_id: '1679220851267858'
+  - relpath: processed/.gitkeep
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      remote_storage:
+        etag: 08d4c1c392e1e7fd021001
+        version_id: '1679220850876628'
+  - relpath: raw/.gitkeep
+    md5: d41d8cd98f00b204e9800998ecf8427e
+    size: 0
+    cloud:
+      remote_storage:
+        etag: 08dedad792e1e7fd021001
+        version_id: '1679220851207518'
+  - relpath: raw/domain_summary.json
+    md5: 83dbcc69516c483f74b9d19aefac2b99
+    size: 1415
+    cloud:
+      remote_storage:
+        etag: 08ef95cf92e1e7fd021001
+        version_id: '1679220851067631'
