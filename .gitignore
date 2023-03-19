@@ -95,3 +95,6 @@ data/*/*
 models/*
 !.gitkeep
 /data
+
+# Hydra
+outputs/*
