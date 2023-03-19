@@ -1,0 +1,13 @@
+# Bigquery Schema
+dataset_id: raw_online_grocery_delivery
+table_name: domain_summary
+schema:
+  - name: id
+    mode: REQUIRED
+    type: STRING
+  - name: data
+    mode: REQUIRED
+    type: JSON
+  - name: summary_info
+    mode: REQUIRED
+    type: JSON
