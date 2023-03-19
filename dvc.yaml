@@ -1,0 +1,23 @@
+# Different Data Stages and their dependencies
+
+stages:
+  request_data:
+    cmd: python src/request.py
+    deps:
+    - src/request.py
+    - src/config.py
+    outs:
+    - data/raw:
+        persist: true
+  # train_model:
+  #   cmd: python src/train_model.py
+  #   deps:
+  #   - config/main.yaml
+  #   - config/model
+  #   - data/processed
+  #   - src/train_model.py
+  #   outs:
+  #   - data/final:
+  #       persist: true
+  #   - models:
+  #       persist: true
