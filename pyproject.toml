@@ -19,6 +19,7 @@ prefect-gcp = "^0.3.0"
 dvc = "^2.50.0"
 dvc-gs = "^2.22.0"
 google-cloud-bigquery = "^3.7.0"
+google-cloud-bigquery-storage = "^2.19.0"
 
 
 [tool.poetry.dev-dependencies]
