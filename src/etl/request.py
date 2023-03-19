@@ -1,6 +1,4 @@
-"""Python script to request API"""
-
-import json
+"""Python module related to requesting data from APIs"""
 
 import requests
 from prefect.blocks.system import Secret
@@ -57,17 +55,3 @@ def parse_response(response: requests.Response):
 
     response_json = response.json()
     return response_json
-
-
-def save_result(response_json: dict, save_location: str):
-    """Save the response_json to a file
-
-    Parameters
-    ----------
-    response_json : dict
-        The response_json to save
-    save_location : str
-        The location to save the response_json
-    """
-    with open(save_location, "w") as f:
-        json.dump(response_json, f, indent=4)
