@@ -3,7 +3,7 @@
 import requests
 from prefect import flow, task
 
-from etl import request
+from etl import persist, request
 from utils import config
 
 
@@ -37,7 +37,7 @@ def save_domain_summary_endpoint_result(
     response_json: dict, save_location: str
 ):
     """Save the result from the Domain Summary Serpstat API endpoint"""
-    request.save_result(response_json, save_location)
+    persist.save_result(response_json, save_location, store_location="gcs")
 
 
 @flow
