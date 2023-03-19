@@ -1,29 +1,39 @@
 """ Tests for request module """
 
 import pytest
-from prefect import flow
-from prefect.logging import disable_run_logger
 
-from src.request import parse_response, request_api, save_result
+from src.etl.request import parse_response, request_serpstats_api, save_result
 
 
-def test_task_request_getDomainsInfo_api():
-    """Test Requesting the getDomainsInfo API"""
+@pytest.fixture()
+def sucessful_request_serpstats_api():
+    response = request_serpstats_api(
+        method="SerpstatDomainProcedure.getDomainsInfo",
+        params={"domains": ["shop.rewe.de"], "database": "g_de"},
+    )
+    return response
 
-    @flow
-    def test_flow():
-        return request_api(
-            method="SerpstatDomainProcedure.getDomainsInfo",
-            domains=["shop.rewe.de"],
-            database="g_de",
-        )
 
-    response = test_flow()
+def test_request_is_sucessful(sucessful_request_serpstats_api):
+    """Test if the response is sucessful (200)"""
 
-    # Check if the response is valid
+    response = sucessful_request_serpstats_api
+
     assert response.status_code == 200
-    assert isinstance(response.json(), dict)
-    assert isinstance(response.json()["result"], dict)
-    assert isinstance(response.json()["result"]["data"], list)
-    assert len(response.json()["result"]["data"]) == 1
+
+
+def test_parse_response(sucessful_request_serpstats_api):
+    """Test if the response is parsed correctly"""
+
+    response = sucessful_request_serpstats_api
+    response_json = parse_response(response)
+
+    assert isinstance(response_json, dict)
+
+
+def test_reponse_contains_correct_data(sucessful_request_serpstats_api):
+    """Test if the response contains the correct data"""
+
+    response = sucessful_request_serpstats_api
+
     assert response.json()["result"]["data"][0]["domain"] == "shop.rewe.de"
