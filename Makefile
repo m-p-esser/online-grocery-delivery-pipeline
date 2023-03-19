@@ -35,6 +35,12 @@ activate:
 test:
 	pytest
 
+##################### Bigquery
+
+create_tables:
+	@echo "Creating Bigquery Tables..."
+	python src/create_bigquery_tables.py
+
 ##################### Prefect
 
 prefect_authenticate:
@@ -48,6 +54,7 @@ pipeline/request:
 pipeline:
 	@echo "Running full pipeline..."
 	python src/main.py
+
 
 ##################### Documentation
 
