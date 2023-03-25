@@ -1,4 +1,4 @@
-"""Python script to request Domain Summary Endpoint"""
+"""Flow and Tasks to request Domain Summary Endpoint"""
 
 import requests
 from prefect import flow, get_run_logger, task
