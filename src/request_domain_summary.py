@@ -5,6 +5,7 @@ from prefect import flow, get_run_logger, task
 
 from etl import persist, request
 from utils.config import DomainSummaryRequestConfig
+from utils.data_models import BigQuerySchema
 
 
 @task(
@@ -13,7 +14,9 @@ from utils.config import DomainSummaryRequestConfig
     name="Request Domain Summary Endpoint",
     description="Request the Domain Summary Serpstat API endpoint (https://serpstat.com/api/412-summarnij-otchet-po-domenu-v4-serpstatdomainproceduregetdomainsinfo/",
 )
-def request_domain_summary_endpoint(method: str, params: dict):
+def request_domain_summary_endpoint(
+    method: str, params: dict
+) -> requests.Response:
     """Request the Domain Summary Serpstat API endpoint"""
 
     logger = get_run_logger()
@@ -28,7 +31,9 @@ def request_domain_summary_endpoint(method: str, params: dict):
 
 
 @task
-def parse_domain_summary_endpoint_response(response: requests.Response):
+def parse_domain_summary_endpoint_response(
+    response: requests.Response,
+) -> dict:
     """Parse the response from the Domain Summary Serpstat API endpoint"""
 
     logger = get_run_logger()
@@ -45,7 +50,7 @@ def parse_domain_summary_endpoint_response(response: requests.Response):
 @task
 def save_domain_summary_endpoint_result(
     response_json: dict, save_path: str, save_location: str
-):
+) -> None:
     """Save the result from the Domain Summary Serpstat API endpoint"""
 
     logger = get_run_logger()
@@ -57,15 +62,30 @@ def save_domain_summary_endpoint_result(
 
 
 @flow
-def domain_summary_endpoint_request_flow(config: DomainSummaryRequestConfig):
-    """Flow to request the Domain Summary Serpstat API endpoint"""
+def domain_summary_endpoint_request_flow(
+    config: DomainSummaryRequestConfig, bigquery_schema: BigQuerySchema
+):
+    """Flow to request the Domain Summary Serpstat API endpoint and store the results"""
 
     response = request_domain_summary_endpoint(config.method, config.params)
+
     result = parse_domain_summary_endpoint_response(response)
+
     save_domain_summary_endpoint_result(
         result, config.save_path, config.save_location
     )
 
+    records = list(result)
+    persist.insert_rows_to_bigquery_table(
+        records, bigquery_schema.dataset_id, bigquery_schema.table_name
+    )
+
 
 if __name__ == "__main__":
-    domain_summary_endpoint_request_flow(config=DomainSummaryRequestConfig())
+    domain_summary_endpoint_request_flow(
+        config=DomainSummaryRequestConfig(),
+        bigquery_schema=BigQuerySchema(
+            dataset_id="raw_online_grocery_delivery",
+            table_name="domain_summary",
+        ),
+    )
