@@ -1,23 +1,21 @@
-""" Create Pydantic models """
-from typing import Any, Dict, List
+""" Create Pydantic Configuration models """
 
-from pydantic import BaseModel, validator
+from typing import Optional
+
+from pydantic import BaseModel
 
 
-class Location(BaseModel):
-    """Specify the locations of inputs and outputs"""
+class DomainSummaryParams(BaseModel):
+    """Parameters for requesting the Domain Summary Serpstat API endpoint"""
 
-    data_raw_domain_summary: str = "data/raw/domain_summary.json"
-    # data_process: str = "data/processed/xy.pkl"
-    # data_final: str = "data/final/predictions.pkl"
-    # model: str = "models/svc.pkl"
-    # input_notebook: str = "notebooks/analyze_results.ipynb"
-    # output_notebook: str = "notebooks/results.ipynb"
+    domains: list[str] = ["shop.rewe.de", "www.edeka24.de"]
+    database: str = "g_de"
 
 
 class DomainSummaryRequestConfig(BaseModel):
-    """Specify the parameters for requesting the Domain Summary Endpoint of the Serpstat API"""
+    """Configuration for requesting the Domain Summary Serpstat API endpoint"""
 
     method: str = "SerpstatDomainProcedure.getDomainsInfo"
-    domains: List[str] = ["shop.rewe.de", "www.edeka24.de"]
-    database: str = "g_de"
+    params: dict = dict(DomainSummaryParams())
+    save_path: str = "data/raw/domain_summary.json"
+    save_location: str = "local"
