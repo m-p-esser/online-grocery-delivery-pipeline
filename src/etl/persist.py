@@ -7,7 +7,7 @@ from prefect_gcp.cloud_storage import GcsBucket
 
 
 def save_result(
-    response_json: dict, save_location: str, store_location: str = "local"
+    response_json: dict, save_path: str, save_location: str = "local"
 ):
     """Save the response_json to a file
 
@@ -15,25 +15,25 @@ def save_result(
     ----------
     response_json : dict
         The response_json to save
-    save_location : str
+    save_path : str
         The location to save the response_json
-    store_location : str, optional
+    save_location : str, optional
         The location to store the response_json, by default "local"
     """
 
-    allowed_store_locations = ["local", "gcs"]
-    if store_location not in allowed_store_locations:
+    allowed_save_locations = ["local", "gcs"]
+    if save_location not in allowed_save_locations:
         raise ValueError(
-            "store_location must be one of the following values: {}".format(
-                allowed_store_locations
+            "save_location must be one of the following values: {}".format(
+                allowed_save_locations
             )
         )
 
-    if store_location == "local":
-        with open(save_location, "w") as f:
+    if save_location == "local":
+        with open(save_path, "w") as f:
             json.dump(response_json, f, indent=4)
 
-    if store_location == "gcs":
+    if save_location == "gcs":
         gcs_bucket = GcsBucket.load("gcs-bucket")
-        with open(save_location, "rb") as f:
-            gcs_bucket.upload_from_file_object(f, save_location)
+        with open(save_path, "rb") as f:
+            gcs_bucket.upload_from_file_object(f, save_path)
