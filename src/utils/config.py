@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class DomainSummaryParams(BaseModel):
+class DomainSummaryRequestParams(BaseModel):
     """Parameters for requesting the Domain Summary Serpstat API endpoint"""
 
     domains: list[str] = ["shop.rewe.de", "www.edeka24.de"]
@@ -16,6 +16,6 @@ class DomainSummaryRequestConfig(BaseModel):
     """Configuration for requesting the Domain Summary Serpstat API endpoint"""
 
     method: str = "SerpstatDomainProcedure.getDomainsInfo"
-    params: dict = dict(DomainSummaryParams())
+    params: dict = dict(DomainSummaryRequestParams())
     save_path: str = "data/raw/domain_summary.json"
     save_location: str = "local"
