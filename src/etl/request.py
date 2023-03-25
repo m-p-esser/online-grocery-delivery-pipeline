@@ -4,7 +4,7 @@ import requests
 from prefect.blocks.system import Secret
 
 
-def request_serpstats_api(method: str, params: dict):
+def request_serpstats_api(method: str, params: dict) -> requests.Response:
     """
     Request the API
 
@@ -45,7 +45,7 @@ def request_serpstats_api(method: str, params: dict):
     return response
 
 
-def parse_response(response: requests.Response):
+def parse_response(response: requests.Response) -> dict:
     """Extract data from response and return as dict
 
     Parameters
