@@ -3,7 +3,7 @@
 from google.cloud import bigquery
 from prefect_gcp.credentials import GcpCredentials
 
-from utils.data_models import BigQuerySchema, DomainSummaryBigQuerySchema
+from utils.data_models import BigQueryField, BigQuerySchema
 
 
 def create_bigquery_dataset(dataset_id: str):
@@ -29,12 +29,16 @@ def create_bigquery_dataset(dataset_id: str):
     print(f"Created dataset {client.project}.{dataset.dataset_id}")
 
 
-def create_bigquery_table(biqquery_schema: BigQuerySchema):
+def create_bigquery_table(
+    dataset_id: str, table_name: str, fields: list[bigquery.SchemaField]
+):
     """
     Creates a BigQuery Table.
 
     Args:
         dataset_id: BiqQuerySchema Data Model.
+        table_name: The name of the table to be created.
+        fields: The fields of the table to be created.
     """
     # Load Credentials and Config
     gcp_credentials = GcpCredentials.load("gcp-credentials")
@@ -44,10 +48,8 @@ def create_bigquery_table(biqquery_schema: BigQuerySchema):
     client = bigquery.Client(project=gcp_credentials.project)
 
     # Construct a full Table object to send to the API
-    dataset_id = biqquery_schema.dataset_id
-    table_name = biqquery_schema.table_name
     table_id = f"{project_id}.{dataset_id}.{table_name}"
-    table = bigquery.Table(table_id, biqquery_schema.schema_definition)
+    table = bigquery.Table(table_id, fields)
 
     # Make an API request to create table
     client.create_dataset(dataset_id, exists_ok=True)
@@ -57,7 +59,25 @@ def create_bigquery_table(biqquery_schema: BigQuerySchema):
 
 if __name__ == "__main__":
 
-    # Create multiple dataset(s) and tables
-    domain_summary_bigquery_schema = DomainSummaryBigQuerySchema()
-    create_bigquery_dataset(domain_summary_bigquery_schema.dataset_id)
-    create_bigquery_table(domain_summary_bigquery_schema)
+    # Instantiate Domain Summary Schema
+    domain_summary_bigquery_schema = BigQuerySchema(
+        dataset_id="raw_online_grocery_delivery",
+        table_name="domain_summary",
+        fields=[
+            BigQueryField(name="id", type="STRING", mode="REQUIRED"),
+            BigQueryField(name="result", type="JSON", mode="REQUIRED"),
+        ],
+    )
+    fields = domain_summary_bigquery_schema.format_schema()
+
+    # Create Bigquery Dataset
+    create_bigquery_dataset(
+        dataset_id=domain_summary_bigquery_schema.dataset_id
+    )
+
+    # Create Domain Summary Bigquery Table
+    create_bigquery_table(
+        dataset_id=domain_summary_bigquery_schema.dataset_id,
+        table_name=domain_summary_bigquery_schema.table_name,
+        fields=fields,
+    )
