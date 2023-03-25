@@ -1,21 +1,32 @@
-""" Create Pydantic Data models """
+""" Create Data models """
+
+from dataclasses import dataclass
+from typing import Optional
 
 from google.cloud import bigquery
-from pydantic import BaseModel
 
 
-# Base Data Model for BigQuery Schema
-class BigQuerySchema(BaseModel):
+@dataclass
+class BigQueryField:
+    """BigQuery Field"""
+
+    name: str
+    type: str
+    mode: str
+
+
+@dataclass
+class BigQuerySchema:
+    """BigQuery Schema"""
+
     dataset_id: str
     table_name: str
-    schema_definition: list
+    fields: Optional[list[BigQueryField]] = None
 
-
-class DomainSummaryBigQuerySchema(BigQuerySchema):
-    dataset_id = "raw_online_grocery_delivery"
-    table_name = "domain_summary"
-    schema_definition = [
-        bigquery.SchemaField("id", "STRING", "REQUIRED"),
-        bigquery.SchemaField("data", "JSON", "REQUIRED"),
-        bigquery.SchemaField("summary_info", "JSON", "REQUIRED"),
-    ]
+    def format_schema(self):
+        """Format BigQuery Schema using bigquery.SchemaField"""
+        formatted_schema = [
+            bigquery.SchemaField(field.name, field.type, field.mode)
+            for field in self.fields
+        ]
+        return formatted_schema
