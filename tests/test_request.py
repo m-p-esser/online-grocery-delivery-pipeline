@@ -2,7 +2,7 @@
 
 import pytest
 
-from src.etl.request import parse_response, request_serpstats_api, save_result
+from src.etl.request import parse_response, request_serpstats_api
 
 
 @pytest.fixture()
