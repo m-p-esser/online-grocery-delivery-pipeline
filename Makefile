@@ -49,7 +49,7 @@ prefect_authenticate:
 
 pipeline/request:
 	@echo "Requesting API data..."
-	python src/request_domain_summary.py
+	python src/request_google_jobs.py
 
 pipeline:
 	@echo "Running full pipeline..."
