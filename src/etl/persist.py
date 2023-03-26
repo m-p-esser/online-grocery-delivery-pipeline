@@ -3,12 +3,12 @@
 import json
 
 from prefect import get_run_logger
-from prefect_gcp.bigquery import bigquery_insert_stream
+from prefect_gcp.bigquery import bigquery_load_cloud_storage
 from prefect_gcp.cloud_storage import GcsBucket
 from prefect_gcp.credentials import GcpCredentials
 
 
-def save_result(
+def save_result_as_file(
     response_json: dict, save_path: str, save_location: str = "local"
 ):
     """Save the response_json to a file
@@ -41,19 +41,19 @@ def save_result(
             gcs_bucket.upload_from_file_object(f, save_path)
 
 
-def insert_rows_to_bigquery_table(
-    records: list[dict], dataset_id: str, table_name: str
-) -> list:
-    """Inserts records into a BigQuery table using the bigquery_insert_stream operator.
+def transfer_data_from_gcs_to_bigquery(
+    dataset_id: str, table_name: str, gcs_uri: str
+):
+    """Load data from file stored in Google Cloud Storage (GCS) and store it in Google BigQuery Table
 
     Parameters
     ----------
-    records : list[dict]
-        The records to insert into the BigQuery table
     dataset_id : str
         The name of the dataset
     table_name : str
         The name of the table
+    gcs_uri : str
+        The URI of the file in GCS
     """
 
     logger = get_run_logger()
@@ -61,11 +61,11 @@ def insert_rows_to_bigquery_table(
     # Load GCP credentials from the context
     gcp_credentials = GcpCredentials.load("gcp-credentials")
 
-    # Insert the records into the BigQuery table
-    result = bigquery_insert_stream(
+    # Load data from GCS to BigQuery
+    result = bigquery_load_cloud_storage(
         dataset=dataset_id,
         table=table_name,
-        records=records,
+        uri=gcs_uri,
         gcp_credentials=gcp_credentials,
     )
 

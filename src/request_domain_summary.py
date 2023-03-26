@@ -55,7 +55,7 @@ def save_domain_summary_endpoint_result(
 
     logger = get_run_logger()
 
-    persist.save_result(response_json, save_path, save_location)
+    persist.save_result_as_file(response_json, save_path, save_location)
 
     logger.info("INFO level log message")
     logger.info(f"Saved API response ({save_location}) here: {save_path}")
@@ -75,10 +75,11 @@ def domain_summary_endpoint_request_flow(
         result, config.save_path, config.save_location
     )
 
-    records = list(result)
-    persist.insert_rows_to_bigquery_table(
-        records, bigquery_schema.dataset_id, bigquery_schema.table_name
-    )
+    # records = []
+    # records.append(result)
+    # persist.insert_rows_to_bigquery_table(
+    #     records, bigquery_schema.dataset_id, bigquery_schema.table_name
+    # )
 
 
 if __name__ == "__main__":
